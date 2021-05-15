@@ -1,0 +1,28 @@
+/*.svg-circle {
+  transition: 200ms;
+}
+
+.svg-circle:hover {
+  fill: #5FA316;
+}*/
+
+.bgVillage {
+   background-image: url("../resources/city1.png");
+   background-repeat: no-repeat;
+   background-position: top center;
+   height: 1200px;
+}
+
+.main {
+   /* background-color: #b5bfdf; */
+   width: 800px;
+   margin: 0 auto;
+}
+
+.constructBuilding {
+   width: 250px;
+   height: 100px;
+   padding: 5px;
+   background-color: #b5bfdf;
+   border: 1px solid;
+}

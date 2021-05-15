@@ -1,17 +1,15 @@
 package cz.ancient.AncientVillage.controller;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cz.ancient.AncientVillage.db.Empire;
-import cz.ancient.AncientVillage.db.EmpireRepository;
+import cz.ancient.AncientVillage.db.entity.Empire;
+import cz.ancient.AncientVillage.db.repository.EmpireRepository;
 import cz.ancient.AncientVillage.model.User;
 
 /**
@@ -20,7 +18,7 @@ import cz.ancient.AncientVillage.model.User;
  * @author Jan Duchac
  */
 @RestController
-@RequestMapping("common")
+@RequestMapping("/common")
 public class CommonController {
 
 //    @PostMapping("/logged_user")

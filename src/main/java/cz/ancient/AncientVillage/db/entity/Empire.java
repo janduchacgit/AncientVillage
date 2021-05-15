@@ -1,4 +1,4 @@
-package cz.ancient.AncientVillage.db;
+package cz.ancient.AncientVillage.db.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
