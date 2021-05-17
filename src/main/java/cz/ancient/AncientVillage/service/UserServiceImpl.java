@@ -1,7 +1,6 @@
-package cz.ancient.AncientVillage.db.impl;
+package cz.ancient.AncientVillage.service;
 
-import static cz.ancient.common.constant.CommonConstant.Path.RESOURCES_JSON;
-import static cz.ancient.common.util.CommonUtil.commonUtil;
+import static cz.ancient.AncientVillage.AncientVillageApplication.encoder;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -9,27 +8,15 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import cz.ancient.AncientVillage.api.UserService;
-import cz.ancient.dao.UserDataService;
-import cz.ancient.dao.UserService;
-import cz.ancient.dao.mapper.EmpireDAO;
-import cz.ancient.dao.mapper.UserActivationDAO;
-import cz.ancient.dao.mapper.UserDAO;
-import cz.ancient.dao.typeHandler.UserBuildingDataTypeHandler;
-import cz.ancient.model.Empire;
-import cz.ancient.model.User;
-import cz.ancient.model.UserActivation;
-import cz.ancient.model.data.UserData;
+import cz.ancient.AncientVillage.db.EmpireRepository;
+import cz.ancient.AncientVillage.db.UserActivationRepository;
+import cz.ancient.AncientVillage.db.UserRepository;
+import cz.ancient.AncientVillage.model.User;
+import cz.ancient.AncientVillage.model.UserActivation;
 
-/**
- * UserServiceImpl -
- * @author Jan DUCHAC
- */
 @Component
 public class UserServiceImpl implements UserService {
 
@@ -39,48 +26,47 @@ public class UserServiceImpl implements UserService {
    //   private SqlSessionTemplate sqlTemplate;
 
    @Autowired
-   private UserDAO userDAO;
+   private UserRepository userRepository;
 
    @Autowired
-   private EmpireDAO empireDAO;
+   private EmpireRepository empireRepository;
 
    @Autowired
-   private UserActivationDAO userActivationDAO;
+   private UserActivationRepository userActivationRepository;
 
-   @Autowired
-   private UserDataService userDataService;
+//   @Autowired
+//   private UserDataService userDataService;
 
    @Override
+   public User getUser(final long id) { // TODO je potreba?
+
+      System.out.println("do User sql");
+
+      return userRepository.findById(id);
+   }
+
+   @Override
+   public User getUser(final String playerName) { // TODO je potreba?
+
+      System.out.println("getUser playerName: " + playerName);
+
+      return userRepository.findByPlayerName(playerName);
+   }
+   
+   @Override
    public boolean registerUser(final String playerName, final String email, final String password, final String contextPath) {
+      final User user = userRepository.save(new User(playerName, email, encoder.encode(password)));
 
-      final ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder(512);
-      final String encodedPassword = shaPasswordEncoder.encodePassword(password, null);
-      final User user = new User(playerName, email, encodedPassword);
-      // password sha512
-
-      // try-catch / throws Exception ?
-
-      int i = userDAO.insert(user);
-
-      if (i != 1) {
-         // throw exception
-      }
-
-      System.out.println("userId id 2 : " + user.getId());
-
+      System.out.println("new user: " + user);
       final String token = UUID.randomUUID().toString();
-      final Date expiryDate = calculateExpiryDate();
 
-      i = userActivationDAO.insert(new UserActivation(token, expiryDate.getTime(), user));
+      userActivationRepository.save(new UserActivation(token, calculateExpiryDate().getTime(), user));
 
-      if (i != 1) {
-         // throw exception
-      }
 
-      final UserActivation userActivation = userActivationDAO.getUserActivation(token);
+      final UserActivation userActivation = userActivationRepository.findByToken(token);
       System.out.println("userActivation: " + userActivation.toString());
 
-      // send email
+      // send email TODO
       final String link = contextPath + "?token=" + token + "&email=" + email;
       System.out.println("link: " + link);
 
@@ -88,35 +74,21 @@ public class UserServiceImpl implements UserService {
    }
 
    @Override
-   public User getUser(final Long id) {
-
-      System.out.println("do User sql");
-
-      return userDAO.getUser(id);
-   }
-
-   @Override
-   public User getUser(final String playerName) {
-
-      System.out.println("getUser playerName: " + playerName);
-
-      return userDAO.getUserByName(playerName);
-   }
-
-   @Override
-   public User activateUser(final String token, final String email) throws IOException {
-
-      final UserActivation userActivation = userActivationDAO.getUserActivation(token);
+   public User activateUser(final String token, final String email) {
+      final UserActivation userActivation = userActivationRepository.findByToken(token);
 
       if (userActivation == null) {
          // throw exception token
       }
+      
+      final User user = userActivation.getUser();
 
-      if (userActivation.getUser().isEnabled()) {
+
+      if (user.isEnabled()) {
          // already activated - log and continue
       }
 
-      if (!email.equalsIgnoreCase(userActivation.getUser().getEmail())) {
+      if (!email.equalsIgnoreCase(user.getEmail())) {
          // throw exception email
       }
 
@@ -126,59 +98,51 @@ public class UserServiceImpl implements UserService {
          // throw exception date
       }
 
-      final int i = userDAO.activateUser(userActivation.getUser().getId());
+      user.setEnabled(true);
+      userRepository.save(user);
 
       // check i
 //      if  ok 
-      initUserData(userActivation.getUser());
+//      initUserData(userActivation.getUser());
 
 
-      return userActivation.getUser();
+      return user;
    }
 
    @Override
-   public User setEmpire(final Integer empireId, final Long userId) {
+   public User setEmpire(final Integer empireId, final long userId) { // TODO id to object
+      final User user = userRepository.findById(userId);
+      user.setEmpire(empireRepository.findById(empireId));
 
-      final Empire empire = empireDAO.getEmpire(empireId);
-
-      if (empire != null) {
-
-         final int i = userDAO.setEmpire(empire, userId);
-
-      }
-
-      return userDAO.getUser(userId);
+      return userRepository.save(user);
    }
 
    
-   private void initUserData(final User user) throws IOException {
-      // user resources
-
-      // user buildings
-      System.out.println("user_builidng.json");
-      final JsonNode userBuildingJson = commonUtil.getJson(RESOURCES_JSON + "user_building_data.json");
-      System.out.println("userBuilding: " + userBuildingJson.toString());
-
-      final UserData userData = new UserData();
-      userData.setUser(user);
-      userData.setUserBuildingData(UserBuildingDataTypeHandler.convert(userBuildingJson.toString()));
-
-      userDataService.updateUserData(userData);
-
-      // TODO json to data
-//      final UserBuilding userBuilding = new UserBuilding(userBuildingJson, user);
-//      userDataDAO.insert(userBuilding);
-
-      // user storage
-
-      // user production
-      
-   }
-
-
+//   private void initUserData(final User user) throws IOException {
+//      // user resources
+//
+//      // user buildings
+//      System.out.println("user_builidng.json");
+//      final JsonNode userBuildingJson = commonUtil.getJson(RESOURCES_JSON + "user_building_data.json");
+//      System.out.println("userBuilding: " + userBuildingJson.toString());
+//
+//      final UserData userData = new UserData();
+//      userData.setUser(user);
+//      userData.setUserBuildingData(UserBuildingDataTypeHandler.convert(userBuildingJson.toString()));
+//
+//      userDataService.updateUserData(userData);
+//
+//      // TODO json to data
+////      final UserBuilding userBuilding = new UserBuilding(userBuildingJson, user);
+////      userDataDAO.insert(userBuilding);
+//
+//      // user storage
+//
+//      // user production
+//      
+//   }
 
    private Date calculateExpiryDate() {
-
       Calendar cal = Calendar.getInstance();
       cal.setTime(new Date());
       System.out.println("today: " + cal.getTime());

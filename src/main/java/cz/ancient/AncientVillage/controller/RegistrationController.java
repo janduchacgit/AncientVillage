@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cz.ancient.AncientVillage.api.UserService;
 
-/**
- * RegistrationController -
- * @author Jan DUCHAC
- */
 @Controller
 @RequestMapping("/registration")
 public class RegistrationController {
@@ -28,7 +24,6 @@ public class RegistrationController {
 
    @Autowired
    private UserService userService;
-
 
    @RequestMapping(value = "/register_user", method = { RequestMethod.POST })
    @ResponseBody
@@ -60,17 +55,7 @@ public class RegistrationController {
 
       // TODO validation/check playername, email, password
 
-      //      ResponseResult
-
-
-//      userService.createUser(playername, email, password);
-      try {
-         userService.activateUser(token, email);
-      } catch (Exception e) {
-         System.out.println(e.getMessage());
-      }
-      //      return "";
-
+      userService.activateUser(token, email);
    }
 
 

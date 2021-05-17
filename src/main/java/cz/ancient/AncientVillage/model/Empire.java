@@ -1,21 +1,16 @@
-package cz.ancient.AncientVillage.db.entity;
+package cz.ancient.AncientVillage.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-/**
- * Empire - db entity
- *
- * @author Jan Duchac [jan.duchac@intelis.cz]
- */
 @Entity
 public class Empire {
-    
+
     @Id
     @GeneratedValue
     private long id;
-    
+
     private String name;
 
     public long getId() {

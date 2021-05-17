@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cz.ancient.AncientVillage.db.entity.Empire;
-import cz.ancient.AncientVillage.db.repository.EmpireRepository;
+import cz.ancient.AncientVillage.model.Empire;
+import cz.ancient.AncientVillage.db.EmpireRepository;
 import cz.ancient.AncientVillage.model.User;
 
 /**
@@ -38,7 +38,7 @@ public class CommonController {
         return new User("aaa", name, "B");
     }
 
-    @GetMapping("/emire_list")
+    @GetMapping("/emire_list") 
     public List<Empire> getEmpireList() {
         return empireRepository.findAll();
     }

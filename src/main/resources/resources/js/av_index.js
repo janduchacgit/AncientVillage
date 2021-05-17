@@ -35,7 +35,7 @@ function initRegistrationForm() {
          complete : function() {
 //            progress.destroy();
          },
-         url : SERVICE_PATH + "registration/register_user",
+         url : "registration/register_user",
 //         url : REMOTE + "user/registration/create_user?playername='ahoj'&email=preke&password=aaaaa",
          type : 'post',
          dataType : 'json',
@@ -84,7 +84,7 @@ function initRegistrationForm() {
    var loginBtn = $("<a href='login.html'>Login</a>").appendTo("#divLoginBtn");
 //   $(loginBtn).text("Login").click( function() {
 //
-//      $("<a href='remote/login.html'>Grid</a>").appendTo("#div")
+//      $("<a href='login.html'>Grid</a>").appendTo("#div")
 //
 ////      $("#registration_dialog").dialog("open");
 ////      console.log("ahoj");

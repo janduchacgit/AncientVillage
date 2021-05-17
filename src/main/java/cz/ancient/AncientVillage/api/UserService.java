@@ -9,13 +9,13 @@ import cz.ancient.AncientVillage.model.User;
  */
 public interface UserService {
 
-   boolean registerUser(String playerName, String email, String password, String contextPath);
-
-   User getUser(Long id);
+   User getUser(long id);
 
    User getUser(String playerName);
 
-   User activateUser(String token, String email) throws IOException;
+   boolean registerUser(String playerName, String email, String password, String contextPath);
 
-   User setEmpire(Integer empireId, Long userId);
+   User activateUser(String token, String email);
+
+   User setEmpire(Integer empireId, long userId);
 }

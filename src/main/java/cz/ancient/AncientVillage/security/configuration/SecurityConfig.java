@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -88,8 +89,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*").permitAll()
                 .antMatchers("/js/**").permitAll()
                 .antMatchers("/resources/**").permitAll()
-                .antMatchers("/remote/registration/*").permitAll()
-                .antMatchers("/remote/**").authenticated()
+                .antMatchers("/registration/*").permitAll()
                 .antMatchers("/view/**").authenticated()
                 .antMatchers("/admin/**").hasRole(Role.ADMIN.name());
         //            .antMatchers("/", "/index").permitAll().anyRequest().authenticated();
@@ -142,7 +142,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() { // TODO static AncientVillageApplication
         return new BCryptPasswordEncoder();
     }
 

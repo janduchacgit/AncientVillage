@@ -3,7 +3,6 @@
 
 // paths
 var APP_PATH = "AncientVillage/";
-var SERVICE_PATH = "remote/";
 
 // http methods
 var HTTP_GET = "GET";
@@ -176,7 +175,7 @@ function Countdown(buildingData) {
    function cancel() {
       console.log("cancel call");
 
-      var url = "../" + SERVICE_PATH + "building/cancel_construction_building";
+      var url = "../building/cancel_construction_building";
       var params = {
          "userId" : g_user.id,
          "positionId" : buildingData.positionId,
@@ -248,7 +247,7 @@ function InitLoggedUser() {
 
    console.log("InitLoggedUser");
    
-   var url = "../" + SERVICE_PATH + "common/logged_user";
+   var url = "../common/logged_user";
 
    function successCall(responseData) {
 
@@ -309,7 +308,7 @@ function InitLoggedUser() {
 
 // TODO to common
 function reloadUserData() {
-   var url = "../" + SERVICE_PATH + "user/get_user_data";
+   var url = "../user/get_user_data";
 
    console.log(" user.id: " + g_user.id);
    var params = {
@@ -454,7 +453,7 @@ function reloadUserData() {
    }
 
    function loadPositions(isVillage) {
-      var url = "../" + SERVICE_PATH + "position/get_position_list";
+      var url = "../position/get_position_list";
       var params = {
          "isVillage" : isVillage
       };
@@ -511,7 +510,7 @@ function showBuilding(buildingData) {
    }
 
    function levelUpAction() {
-      var url = "../" + SERVICE_PATH + "building/level_up_building";
+      var url = "../building/level_up_building";
       var params = {
          "userId" : g_user.id,
          "positionId" : buildingData.positionId,
@@ -530,7 +529,7 @@ function showBuilding(buildingData) {
    }
 
    function demolishAction() {
-      var url = "../" + SERVICE_PATH + "building/demolish_building";
+      var url = "../building/demolish_building";
       var params = {
          "userId" : g_user.id,
          "positionId" : buildingData.positionId,
@@ -554,7 +553,7 @@ function showBuilding(buildingData) {
 function constructNewBuilding(positionId, isVillage) {
 //   console.log("IDID: " + id);
    g_buildingWindow.actualPositionId = null;
-   var url = "../" + SERVICE_PATH + "building/get_available_building_list";
+   var url = "../building/get_available_building_list";
    var params = {
       "userId" : g_user.id,
       "positionId" : positionId,
@@ -652,7 +651,7 @@ function constructNewBuilding(positionId, isVillage) {
    function constructAction(positionId, buildingTypeId, numOfBuilders) {
       console.log("constAct: pos = "  + positionId + ", build = " + buildingTypeId);
 
-      var url = "../" + SERVICE_PATH + "building/construct_building";
+      var url = "../building/construct_building";
       var params = {
          "userId" : g_user.id,
          "positionId" : positionId,
@@ -765,7 +764,7 @@ function callService(httpMethod, url, data, successCall, errorCall, dataType, co
 
 
 function initEmpireDialog() {
-   var url = "../" + SERVICE_PATH + "common/get_empire_list";
+   var url = "../common/get_empire_list";
    var choiceEmpireDiv = $("<div />").appendTo("#div_village");
 //   choiceEmpireDiv.append('<input type="radio" name="Egyptian" />');
 //   choiceEmpireDiv.css( { backgroundColor: 'grey' } );
@@ -781,7 +780,7 @@ function initEmpireDialog() {
             text : "Choice empire",
             click : function () {
 
-               var url = "../" + SERVICE_PATH + "user/set_empire";
+               var url = "../user/set_empire";
                var empireId =  $(this).find("input[name=empire_rb]:checked").val();
 
                console.log("set empireId: " + empireId);
